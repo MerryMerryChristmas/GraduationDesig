@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<?php
+	include "./php/Connect2.php";
+?>
+<head>
+  <meta charset="UTF-8" />
+  <title>Personal Diary</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/home-style.css"/>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/mytable2.css"/>
+	<script type="text/javascript">
+		function test(){
+			if(flag){
+				var url = document.getElementById('change');
+				url.setAttribute('href', '#');
+			}
+			else{
+				var url = document.getElementById('change');
+				url.setAttribute('href', 'loading.html');
+			}
+		}
+		window.onload = test;
+	</script>
+</head>
+
+<body>
+  <div class="hm-page-container mx-auto">
+    <header class="hm-header text-center">
+      <p id="changeColor">
+    	  <i id="judge">
+    		  <?php
+    	  	session_start();
+    	  	if(isset($_SESSION['user_id']))
+    	  	{
+    			$flag1=true;	
+    			echo "<script>var flag=true</script>";
+    	  	}
+    	  	else
+    	  	{
+    	  		$_SESSION['user_id']=null;
+    			$flag1=false;
+    			echo "<script>var flag=false</script>";
+    	  	}
+    	  ?>			
+    	  </i>
+      </p>
+    </header>
+    
+    <section class="hm-section">
+      <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+      	<div class="container">
+      	<a id="changeColor" class="navbar-brand" href="#"><?php
+        	if(isset($_SESSION['user_id']))
+        	{
+        		echo "当前用户：". $_SESSION['user_id'];
+      		define("FLAG1","true");
+      		echo "<script>var flag=true</script>";
+        	}
+        	else
+        	{
+        		$_SESSION['user_id']=null;
+        		echo "当前用户：". $_SESSION['user_id'];
+      		define("FLAG1","false");
+      		echo "<script>var flag=false</script>";
+        	}
+        ?>-----欢迎登录个人博客网站hello		
+        </a>
+      	<ul class="navbar-nav">
+      		<li class="nav-item">
+      			<a class="nav-link" href="empty" id="change" >登录</a>
+      		</li>
+      		<li class="">
+      			<a class="nav-link" href="php/logout.php" id="logout" style="color:#00aa00;">注销</a>
+      		</li>
+      		<li class="">
+      			<a class="nav-link" href="home.html">个人首页</a>
+      		</li>
+      		<li class="">
+      			<a class="nav-link" href="album.html">个人相册</a>
+      		</li>
+      		<li class="">
+      			<a class="nav-link" href="personal_diary.html">个人日记</a>
+      		</li>
+      		<li class="">
+      			<a class="nav-link" href="personal_music.html">个人音乐</a>
+      		</li>
+      		<li class="">
+      			<a class="nav-link" href="contact.html">查看留言</a>
+      		</li>
+      		<?php
+              	if($_SESSION['user_id']=="admin"){
+                ?>
+      		<li class="-">
+      			<a class="nav-link" href="administrate.html">管理</a>
+      		</li>
+      		<?php
+              	}
+                ?>
+      	</ul>
+      	</div>
+      </nav>
+      <div class="hm-content-container">
+        <div class="hm-content">
+		<h1 align="center">
+				  个人日记 	
+		</h1>
+          <p>
+          当前状态 : 
+            <?php
+          	if($flag1){
+			
+          		echo "已经登录";
+				$author=$_SESSION['user_id'];
+				$sql="select * from blog where author='$author'";
+				$result=mysqli_query($con,$sql);
+				
+            ?>
+          </p>
+		  <p><a class="td-a" href="new_diary.html">写博客</a></p>
+
+		  <p>
+			<table align="center">
+				<tr align="center">
+					<td>编号</td>
+					<td>标题</td>
+					<td>作者</td>
+					<td>操作</td>
+				</tr>
+				<?php
+				while($row = mysqli_fetch_array($result))
+				{
+				?>
+				<tr>
+					<td><?php echo $row['id'] ?></td>
+					<td><?php echo $row['title'] ?></td>
+					<td><?php echo $row['author'] ?></td>
+					<td>
+						<a class="td-a" href="php/view_article.php?id=<?php echo $row['id'] ?>">查看</a>
+						<a class="td-a" href="php/del_article.php?id=<?php echo $row['id'] ?>">删除</a>
+						<a class="td-a" href="edit_diary.html?id=<?php echo $row['id'] ?>">修改</a>
+						<a class="td-a" href="new_diary.html">写博客</a>
+					</td>
+				</tr>
+				<?php
+				}
+					}else{
+						echo "请先登录";
+					}
+				?>
+			</table>
+
+		  </p>
+			<p></p>
+        </div>
+      </div>
+    </section>
+	
+	<center>
+		<font color='gray' size='4' >
+			Copyright 2021 BigFish.AllRightsReserved.	
+		</font>
+	</center>
+  </div>
+
+</body>
+</html>
